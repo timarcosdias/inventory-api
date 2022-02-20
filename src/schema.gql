@@ -1,0 +1,51 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Link {
+  id: Int!
+  description: String
+  url: String
+}
+
+type RefreshToken {
+  id: Int!
+  userId: Int!
+  expiresIn: String!
+  isRevoked: Boolean!
+  user: [User!]!
+}
+
+type Role {
+  id: Int!
+  name: String!
+  description: String!
+  users: [User!]!
+}
+
+type User {
+  id: Int!
+  username: String
+  roleId: Int!
+  createdAt: String!
+  updatedAt: String!
+  isActive: Boolean!
+  role: Role!
+  refreshToken: RefreshToken!
+  links: [Link!]!
+}
+
+type Query {
+  link(id: Int!): Link!
+  user(id: Int!): User!
+}
+
+type Mutation {
+  createUser(input: UserCreateInput!): User!
+}
+
+input UserCreateInput {
+  username: String!
+  password: String!
+  roleId: Int!
+}

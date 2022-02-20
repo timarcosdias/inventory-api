@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  prod:
+    container_name: links-api
+    image: nestjs-api-prod:1.0.0
+    build:
+      context: .
+      target: production
+      dockerfile: ./Dockerfile
+    command: npm run start:prod
+    ports:
+      - ${PORT}:${PORT}
+      - 9229:9229
+    networks:
+      - webnet
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    container_name: links-postgres
+    image: postgres:12
+    networks:
+      - webnet
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+networks:
+  webnet:
+volumes:
+  pgdata:
