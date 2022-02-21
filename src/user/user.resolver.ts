@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import {
   Args,
   Int,
@@ -17,14 +17,13 @@ import { UserCreateInput } from './model/user-create';
 import { UserService } from './user.service';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubSub = new PubSub();
-
 @Resolver((of) => User)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly linkService: LinkService,
     private readonly roleService: RoleService,
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
   ) {}
 
   @Query((returns) => User)
@@ -53,12 +52,12 @@ export class UserResolver {
       ...input,
       isActive: true,
     });
-    pubSub.publish('userAdded', { userAdded: newUser });
+    this.pubSub.publish('userAdded', { userAdded: newUser });
     return newUser;
   }
 
   @Subscription((returns) => User)
   userAdded() {
-    return pubSub.asyncIterator('userAdded');
+    return this.pubSub.asyncIterator('userAdded');
   }
 }

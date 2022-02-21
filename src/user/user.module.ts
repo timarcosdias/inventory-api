@@ -6,10 +6,18 @@ import { RoleModule } from 'src/role/role.module';
 import { UserController } from './user.controller';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService, UserResolver],
+  providers: [
+    UserService,
+    UserResolver,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
+  ],
   imports: [AuthModule, LinkModule, RoleModule, PrismaModule],
   exports: [UserService],
 })
