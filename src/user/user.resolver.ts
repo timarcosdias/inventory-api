@@ -7,6 +7,7 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
 import { LinkService } from 'src/link/link.service';
 import { RoleService } from 'src/role/role.service';
@@ -14,6 +15,9 @@ import { inspect } from 'util';
 import { User } from './model/user';
 import { UserCreateInput } from './model/user-create';
 import { UserService } from './user.service';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -45,9 +49,16 @@ export class UserResolver {
 
   @Mutation((returns) => User)
   async createUser(@Args('input') input: UserCreateInput) {
-    return this.userService.create({
+    const newUser = await this.userService.create({
       ...input,
       isActive: true,
     });
+    pubSub.publish('userAdded', { userAdded: newUser });
+    return newUser;
+  }
+
+  @Subscription((returns) => User)
+  userAdded() {
+    return pubSub.asyncIterator('userAdded');
   }
 }

@@ -49,3 +49,7 @@ input UserCreateInput {
   password: String!
   roleId: Int!
 }
+
+type Subscription {
+  userAdded: User!
+}
