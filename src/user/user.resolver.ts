@@ -31,6 +31,11 @@ export class UserResolver {
     return this.userService.findOneById(id);
   }
 
+  @Query((returns) => [User])
+  async users() {
+    return this.userService.findAll({});
+  }
+
   @ResolveField()
   async role(@Parent() user: User) {
     const {

@@ -38,6 +38,7 @@ type User {
 type Query {
   link(id: Int!): Link!
   user(id: Int!): User!
+  users: [User!]!
 }
 
 type Mutation {
